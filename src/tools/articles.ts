@@ -8,7 +8,7 @@ export type Article = {
   body: string;
   createdAt: string;
   updatedAt: string;
-  url: string;
+  // url: string;
 };
 
 export const SearchArticlesSchema = z.object({
@@ -45,9 +45,11 @@ export async function searchArticles(
   };
 }
 
-export async function retrieveArticle(args: { id: string }): Promise<Article> {
+export async function retrieveArticle(
+  args: z.infer<typeof RetrieveArticleSchema>
+): Promise<Article> {
   const client = new IntercomClient();
-  const article = await client.retrieveArticle(args.id);
+  const article = await client.retrieveArticle(args.articleId);
   console.error("Article", article);
 
   if (typeof article === "undefined") {
@@ -61,6 +63,6 @@ export async function retrieveArticle(args: { id: string }): Promise<Article> {
     body: article.body,
     createdAt: new Date(article.created_at * 1000).toISOString(),
     updatedAt: new Date(article.updated_at * 1000).toISOString(),
-    url: article.url,
+    // url: article.url,
   };
 }

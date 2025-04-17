@@ -10,6 +10,7 @@ import {
   listConversationsFromLastWeek,
 } from "./tools/conversations.js";
 import {
+  retrieveArticle,
   RetrieveArticleSchema,
   searchArticles,
   SearchArticlesSchema,
@@ -214,7 +215,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (name === "search-articles") {
     try {
       const validatedArgs = SearchArticlesSchema.parse(args);
-      const intercomClient = new IntercomClient();
       const { articles } = await searchArticles(validatedArgs);
 
       return {
@@ -243,12 +243,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (name === "retrieve-article") {
     try {
       const validatedArgs = RetrieveArticleSchema.parse(args);
-      const intercomClient = new IntercomClient();
-      const article = await intercomClient.retrieveArticle(
-        validatedArgs.articleId
-      );
-
-      // console.error("Article:", article);
+      const article = await retrieveArticle(validatedArgs);
 
       return {
         content: [
