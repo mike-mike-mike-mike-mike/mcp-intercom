@@ -215,7 +215,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     try {
       const validatedArgs = SearchArticlesSchema.parse(args);
       const intercomClient = new IntercomClient();
-      const { articles } = await searchArticles(validatedArgs, server);
+      const { articles } = await searchArticles(validatedArgs);
 
       return {
         content: [

@@ -20,8 +20,7 @@ export const RetrieveArticleSchema = z.object({
 });
 
 export async function searchArticles(
-  args: z.infer<typeof SearchArticlesSchema>,
-  server: any
+  args: z.infer<typeof SearchArticlesSchema>
 ) {
   const client = new IntercomClient();
   const params: Record<string, any> = {};
@@ -46,10 +45,7 @@ export async function searchArticles(
   };
 }
 
-export async function retrieveArticle(
-  args: { id: string },
-  server: any
-): Promise<Article> {
+export async function retrieveArticle(args: { id: string }): Promise<Article> {
   const client = new IntercomClient();
   const article = await client.retrieveArticle(args.id);
   console.error("Article", article);
