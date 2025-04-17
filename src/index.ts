@@ -9,7 +9,11 @@ import {
   SearchConversationsSchema,
   listConversationsFromLastWeek,
 } from "./tools/conversations.js";
-import { searchArticles, SearchArticlesSchema } from "./tools/articles.js";
+import {
+  RetrieveArticleSchema,
+  searchArticles,
+  SearchArticlesSchema,
+} from "./tools/articles.js";
 import { z } from "zod";
 const server = new Server(
   {
@@ -35,6 +39,12 @@ const server = new Server(
           description:
             "Search the default help center for articles that match the provided phrase",
           inputSchema: SearchArticlesSchema,
+          outputSchema: z.any(),
+        },
+        "retrieve-article": {
+          description:
+            "Retrieve a specific article by its ID from the help center",
+          inputSchema: RetrieveArticleSchema,
           outputSchema: z.any(),
         },
       },
@@ -122,6 +132,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: "retrieve-article",
+        description:
+          "Retrieve a specific article by its ID from the help center",
+        inputSchema: {
+          type: "object",
+          properties: {
+            articleId: {
+              type: "string",
+              description: "ID of the article to retrieve",
+            },
+          },
+        },
+      },
     ],
   };
 });
@@ -198,6 +222,39 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           {
             type: "text",
             text: JSON.stringify({ articles }, null, 2),
+          },
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error: ${error.message}`,
+            },
+          ],
+        };
+      }
+      throw error;
+    }
+  }
+
+  if (name === "retrieve-article") {
+    try {
+      const validatedArgs = RetrieveArticleSchema.parse(args);
+      const intercomClient = new IntercomClient();
+      const article = await intercomClient.retrieveArticle(
+        validatedArgs.articleId
+      );
+
+      // console.error("Article:", article);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({ article }, null, 2),
           },
         ],
       };

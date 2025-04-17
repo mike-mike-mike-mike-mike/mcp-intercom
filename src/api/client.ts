@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { IntercomConversation } from "../types/intercom.js";
 import axios from "axios";
+import { Article } from "../tools/articles.js";
 
 dotenv.config();
 
@@ -145,6 +146,19 @@ export class IntercomClient {
       },
     });
 
-    return response.data.data as { articles: any[] };
+    return response.data.data as { articles: any[] | undefined };
+  }
+
+  async retrieveArticle(id: string) {
+    const response = await axios.get(`${INTERCOM_API_BASE}/articles/${id}`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Intercom-Version": "2.13",
+      },
+    });
+
+    return response.data as any | undefined;
   }
 }
