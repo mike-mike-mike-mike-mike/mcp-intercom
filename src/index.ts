@@ -5,7 +5,11 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { IntercomClient } from "./api/client.js";
-import { SearchConversationsSchema, listConversationsFromLastWeek } from "./tools/conversations.js";
+import {
+  SearchConversationsSchema,
+  listConversationsFromLastWeek,
+} from "./tools/conversations.js";
+import { searchArticles, SearchArticlesSchema } from "./tools/articles.js";
 import { z } from "zod";
 const server = new Server(
   {
@@ -22,8 +26,15 @@ const server = new Server(
           outputSchema: z.any(),
         },
         "list-conversations-from-last-week": {
-          description: "Fetch all conversations from the last week (last 7 days)",
+          description:
+            "Fetch all conversations from the last week (last 7 days)",
           inputSchema: z.object({}),
+          outputSchema: z.any(),
+        },
+        "search-articles": {
+          description:
+            "Search the default help center for articles that match the provided phrase",
+          inputSchema: SearchArticlesSchema,
           outputSchema: z.any(),
         },
       },
@@ -97,6 +108,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {},
         },
       },
+      {
+        name: "search-articles",
+        description:
+          "Search the default help center for articles that match the provided phrase",
+        inputSchema: {
+          type: "object",
+          properties: {
+            phrase: {
+              type: "string",
+              description: "Phrase to search for in articles",
+            },
+          },
+        },
+      },
     ],
   };
 });
@@ -144,6 +169,35 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           {
             type: "text",
             text: JSON.stringify(conversations, null, 2),
+          },
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error: ${error.message}`,
+            },
+          ],
+        };
+      }
+      throw error;
+    }
+  }
+
+  if (name === "search-articles") {
+    try {
+      const validatedArgs = SearchArticlesSchema.parse(args);
+      const intercomClient = new IntercomClient();
+      const { articles } = await searchArticles(validatedArgs, server);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({ articles }, null, 2),
           },
         ],
       };

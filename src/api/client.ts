@@ -119,4 +119,32 @@ export class IntercomClient {
 
     return response.data as { conversations: IntercomConversation[] };
   }
+
+  async searchArticles(
+    filters: {
+      phrase?: string;
+    } = {},
+    pagination: { perPage?: number; startingAfter?: string } = {}
+  ) {
+    const params: Record<string, string> = {};
+
+    if (filters.phrase) {
+      params.phrase = filters.phrase;
+    }
+
+    params.state = "published";
+    params.highlight = "true";
+
+    const response = await axios.get(`${INTERCOM_API_BASE}/articles/search`, {
+      params,
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Intercom-Version": "2.13",
+      },
+    });
+
+    return response.data.data as { articles: any[] };
+  }
 }
