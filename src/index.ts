@@ -24,27 +24,26 @@ const server = new Server(
   {
     capabilities: {
       tools: {
-        "search-conversations": {
+        // "search-conversations": {
+        //   description:
+        //     "Search Intercom conversations with filters for created_at, updated_at, source type, state, open, and read status",
+        //   inputSchema: SearchConversationsSchema,
+        //   outputSchema: z.any(),
+        // },
+        // "list-conversations-from-last-week": {
+        //   description:
+        //     "Fetch all conversations from the last week (last 7 days)",
+        //   inputSchema: z.object({}),
+        //   outputSchema: z.any(),
+        // },
+        "search-appfolio-help-articles": {
           description:
-            "Search Intercom conversations with filters for created_at, updated_at, source type, state, open, and read status",
-          inputSchema: SearchConversationsSchema,
-          outputSchema: z.any(),
-        },
-        "list-conversations-from-last-week": {
-          description:
-            "Fetch all conversations from the last week (last 7 days)",
-          inputSchema: z.object({}),
-          outputSchema: z.any(),
-        },
-        "search-articles": {
-          description:
-            "Search the default help center for articles that match the provided phrase",
+            "Search for help articles about AppFolio Property Manager (APM), a property management software product. Use this tool to answer questions like 'how do I add a new bank account in AppFolio?' by finding relevant articles.",
           inputSchema: SearchArticlesSchema,
           outputSchema: z.any(),
         },
-        "retrieve-article": {
-          description:
-            "Retrieve a specific article by its ID from the help center",
+        "retrieve-appfolio-help-article": {
+          description: "Retrieve a specific article by its ID",
           inputSchema: RetrieveArticleSchema,
           outputSchema: z.any(),
         },
@@ -57,72 +56,72 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
+      // {
+      //   name: "search-conversations",
+      //   description:
+      //     "Search Intercom conversations with filters for created_at, updated_at, source type, state, open, and read status",
+      //   inputSchema: {
+      //     type: "object",
+      //     properties: {
+      //       createdAt: {
+      //         type: "object",
+      //         properties: {
+      //           operator: {
+      //             type: "string",
+      //             description: 'Operator for created_at (e.g., ">", "<", "=")',
+      //           },
+      //           value: {
+      //             type: "integer",
+      //             description: "Timestamp value for created_at filter",
+      //           },
+      //         },
+      //       },
+      //       updatedAt: {
+      //         type: "object",
+      //         properties: {
+      //           operator: {
+      //             type: "string",
+      //             description: 'Operator for updated_at (e.g., ">", "<", "=")',
+      //           },
+      //           value: {
+      //             type: "integer",
+      //             description: "Timestamp value for updated_at filter",
+      //           },
+      //         },
+      //       },
+      //       sourceType: {
+      //         type: "string",
+      //         description:
+      //           'Source type of the conversation (e.g., "email", "chat")',
+      //       },
+      //       state: {
+      //         type: "string",
+      //         description:
+      //           'Conversation state to filter by (e.g., "open", "closed")',
+      //       },
+      //       open: {
+      //         type: "boolean",
+      //         description: "Filter by open status",
+      //       },
+      //       read: {
+      //         type: "boolean",
+      //         description: "Filter by read status",
+      //       },
+      //     },
+      //   },
+      // },
+      // {
+      //   name: "list-conversations-from-last-week",
+      //   description: "Fetch all conversations from the last week (last 7 days)",
+      //   inputSchema: {
+      //     type: "object",
+      //     properties: {},
+      //   },
+      // },
       {
-        name: "search-conversations",
+        name: "search-appfolio-help-articles",
         description:
-          "Search Intercom conversations with filters for created_at, updated_at, source type, state, open, and read status",
-        inputSchema: {
-          type: "object",
-          properties: {
-            createdAt: {
-              type: "object",
-              properties: {
-                operator: {
-                  type: "string",
-                  description: 'Operator for created_at (e.g., ">", "<", "=")',
-                },
-                value: {
-                  type: "integer",
-                  description: "Timestamp value for created_at filter",
-                },
-              },
-            },
-            updatedAt: {
-              type: "object",
-              properties: {
-                operator: {
-                  type: "string",
-                  description: 'Operator for updated_at (e.g., ">", "<", "=")',
-                },
-                value: {
-                  type: "integer",
-                  description: "Timestamp value for updated_at filter",
-                },
-              },
-            },
-            sourceType: {
-              type: "string",
-              description:
-                'Source type of the conversation (e.g., "email", "chat")',
-            },
-            state: {
-              type: "string",
-              description:
-                'Conversation state to filter by (e.g., "open", "closed")',
-            },
-            open: {
-              type: "boolean",
-              description: "Filter by open status",
-            },
-            read: {
-              type: "boolean",
-              description: "Filter by read status",
-            },
-          },
-        },
-      },
-      {
-        name: "list-conversations-from-last-week",
-        description: "Fetch all conversations from the last week (last 7 days)",
-        inputSchema: {
-          type: "object",
-          properties: {},
-        },
-      },
-      {
-        name: "search-articles",
-        description:
-          "Search the default help center for articles that match the provided phrase",
+          "Search for help articles about AppFolio Property Manager (APM), a property management software product. Use this tool to answer questions like 'how do I add a new bank account in AppFolio?' by finding relevant articles.",
         inputSchema: {
           type: "object",
           properties: {
@@ -134,9 +133,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: "retrieve-article",
-        description:
-          "Retrieve a specific article by its ID from the help center",
+        name: "retrieve-appfolio-help-article",
+        description: "Retrieve a specific article by its ID",
         inputSchema: {
           type: "object",
           properties: {
@@ -155,64 +153,64 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
-  if (name === "search-conversations") {
-    try {
-      const validatedArgs = SearchConversationsSchema.parse(args);
-      const intercomClient = new IntercomClient();
-      const conversations = await intercomClient.searchConversations(
-        validatedArgs
-      );
+  // if (name === "search-conversations") {
+  //   try {
+  //     const validatedArgs = SearchConversationsSchema.parse(args);
+  //     const intercomClient = new IntercomClient();
+  //     const conversations = await intercomClient.searchConversations(
+  //       validatedArgs
+  //     );
 
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(conversations, null, 2),
-          },
-        ],
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error: ${error.message}`,
-            },
-          ],
-        };
-      }
-      throw error;
-    }
-  }
+  //     return {
+  //       content: [
+  //         {
+  //           type: "text",
+  //           text: JSON.stringify(conversations, null, 2),
+  //         },
+  //       ],
+  //     };
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       return {
+  //         content: [
+  //           {
+  //             type: "text",
+  //             text: `Error: ${error.message}`,
+  //           },
+  //         ],
+  //       };
+  //     }
+  //     throw error;
+  //   }
+  // }
 
-  if (name === "list-conversations-from-last-week") {
-    try {
-      const conversations = await listConversationsFromLastWeek();
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(conversations, null, 2),
-          },
-        ],
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error: ${error.message}`,
-            },
-          ],
-        };
-      }
-      throw error;
-    }
-  }
+  // if (name === "list-conversations-from-last-week") {
+  //   try {
+  //     const conversations = await listConversationsFromLastWeek();
+  //     return {
+  //       content: [
+  //         {
+  //           type: "text",
+  //           text: JSON.stringify(conversations, null, 2),
+  //         },
+  //       ],
+  //     };
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       return {
+  //         content: [
+  //           {
+  //             type: "text",
+  //             text: `Error: ${error.message}`,
+  //           },
+  //         ],
+  //       };
+  //     }
+  //     throw error;
+  //   }
+  // }
 
-  if (name === "search-articles") {
+  if (name === "search-appfolio-help-articles") {
     try {
       const validatedArgs = SearchArticlesSchema.parse(args);
       const { articles } = await searchArticles(validatedArgs);
@@ -240,7 +238,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
   }
 
-  if (name === "retrieve-article") {
+  if (name === "retrieve-appfolio-help-article") {
     try {
       const validatedArgs = RetrieveArticleSchema.parse(args);
       const article = await retrieveArticle(validatedArgs);
