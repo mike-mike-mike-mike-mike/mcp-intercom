@@ -50,7 +50,6 @@ export async function retrieveArticle(
 ): Promise<Article> {
   const client = new IntercomClient();
   const article = await client.retrieveArticle(args.articleId);
-  console.error("Article", article);
 
   if (typeof article === "undefined") {
     throw new Error("Article not found");

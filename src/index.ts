@@ -215,11 +215,31 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const validatedArgs = SearchArticlesSchema.parse(args);
       const { articles } = await searchArticles(validatedArgs);
 
+      console.error("Articles", articles);
+      if (articles.length > 0) {
+        // Automatically fetch the first article
+        const articleId = articles[0].id;
+        const firstArticle = await retrieveArticle({ articleId });
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                { firstArticle, otherArticles: articles.slice(1) },
+                null,
+                2
+              ),
+            },
+          ],
+        };
+      }
+
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify({ articles }, null, 2),
+            text: "No articles found.",
           },
         ],
       };
